@@ -22,9 +22,9 @@ RUN git clone https://aur.archlinux.org/paru-bin.git && \
 
 RUN paru -Sy pgadmin4 --noconfirm
 
-RUN mv /home/builder/.cache/paru/clone/pgadmin4-server/*.pkg.tar.zst /target/ && \
-    mv /home/builder/.cache/paru/clone/pgadmin4-desktop/*.pkg.tar.zst /target/ && \
-    mv /home/builder/.cache/paru/clone/pgadmin4-web/*.pkg.tar.zst /target/ && \
-    mv /home/builder/.cache/paru/clone/pgadmin4/*.pkg.tar.zst /target/
+RUN bash -c 'find /home/builder/.cache/paru/clone/ -name "pgadmin4*.pkg.tar.zst" -type f | while read -r file; do \
+        new_name=$(basename "${file}" | sed -E "s/(-[0-9]+\.[0-9]+)-[0-9]+/\1/"); \
+        mv "${file}" "/target/${new_name}"; \
+    done'
 
 ENTRYPOINT ["bash"]
