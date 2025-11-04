@@ -5,7 +5,9 @@ RUN pacman -Syu --noconfirm && \
       # Download source code
       git \
       # Required by makepkg itself
-      sudo fakeroot debugedit binutils
+      sudo fakeroot debugedit binutils \
+      # Build mod_wsgi
+      gcc make
 
 RUN useradd -m -u 1001 -s /bin/zsh builder && \
     echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers && \
