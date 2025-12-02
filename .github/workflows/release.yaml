@@ -70,6 +70,38 @@ jobs:
           name: build-artifacts
           path: ./release-artifacts
 
+      - name: Check required artifact files exist
+        run: |
+          ls -la ./release-artifacts/
+
+          check_package() {
+            local pattern="$1"
+            local description="$2"
+            local found=false
+            for f in ./release-artifacts/$pattern; do
+              # Skip if glob doesn't match any file
+              [[ ! -e "$f" ]] && continue
+              basename_f=$(basename "$f")
+              # Strict regex: must be exactly pgadmin4[-component]-<digits>.<digits>-x86_64.pkg.tar.zst
+              if [[ $basename_f =~ ^pgadmin4(-[a-z]+)?-[0-9]+\.[0-9]+-x86_64\.pkg\.tar\.zst$ ]]; then
+                found=true
+                break
+              fi
+            done
+            if ! $found; then
+              echo "Error: $description not found with expected format: ${pattern//\*/{version}}"
+              exit 1
+            fi
+          }
+
+          # Validate each required package with strict version format (X.Y only)
+          check_package "pgadmin4-[0-9]*.[0-9]*-x86_64.pkg.tar.zst" "pgadmin4 meta package"
+          check_package "pgadmin4-server-[0-9]*.[0-9]*-x86_64.pkg.tar.zst" "pgadmin4-server package"
+          check_package "pgadmin4-web-[0-9]*.[0-9]*-x86_64.pkg.tar.zst" "pgadmin4-web package"
+          check_package "pgadmin4-desktop-[0-9]*.[0-9]*-x86_64.pkg.tar.zst" "pgadmin4-desktop package"
+
+          echo "All required packages found with correct format"
+
       - name: Create GitHub Release and Upload Assets
         id: create_release
         uses: softprops/action-gh-release@v2
