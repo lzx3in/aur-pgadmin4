@@ -33,6 +33,7 @@ jobs:
           load: true
           tags: pgadmingo:test
           cache-from: type=gha
+          no-cache: true
           cache-to: type=gha,mode=max
 
       - name: Extract files from Docker image
