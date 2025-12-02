@@ -89,7 +89,7 @@ jobs:
               fi
             done
             if ! $found; then
-              echo "Error: $description not found with expected format: ${pattern//\*/{version}}"
+              echo "Error: $description not found with expected format: ${pattern}"
               exit 1
             fi
           }
