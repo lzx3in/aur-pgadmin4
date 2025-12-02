@@ -29,4 +29,7 @@ RUN bash -c 'find /home/builder/.cache/paru/clone/ -name "pgadmin4*.pkg.tar.zst"
         mv "${file}" "/target/${new_name}"; \
     done'
 
+# tmp Fix
+RUN mv /target/pgadmin4-desktop-9.10.1-1-x86_64.pkg.tar.zst /target/pgadmin4-desktop-9.10-x86_64.pkg.tar.zst || true
+
 ENTRYPOINT ["bash"]
