@@ -110,7 +110,7 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          body: "Automated release with unpackaged artifacts for version ${{ github.ref_name }}."
+          body: "Pre-built pgadmin4 packages for Arch Linux. These packages are downloaded and installed when users install the AUR pgadmin4-bin package."
           draft: false
           prerelease: false
           files: |
