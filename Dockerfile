@@ -24,7 +24,7 @@ RUN git clone https://aur.archlinux.org/yay-bin.git && \
 
 RUN yay -Sy pgadmin4 --noconfirm
 
-RUN bash -c 'find /home/builder/.cache/paru/clone/ -name "pgadmin4*.pkg.tar.zst" -type f | while read -r file; do \
+RUN bash -c 'find /home/builder/.cache/yay/ -name "pgadmin4*.pkg.tar.zst" -type f | while read -r file; do \
         new_name=$(basename "${file}" | sed -E "s/(-[0-9]+\.[0-9]+)-[0-9]+/\1/"); \
         mv "${file}" "/target/${new_name}"; \
     done'
