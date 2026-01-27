@@ -1,0 +1,57 @@
+name: AUR Health Check pgadmin4
+
+on:
+  push:
+    branches: [dev]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [dev]
+  schedule:
+    # Run daily at 19:00 AM UTC
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-package:
+    runs-on: ubuntu-latest
+
+    container:
+      image: archlinux/archlinux:latest
+      options: --rm
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Update system and install dependencies
+      run: |
+        pacman -Syu --noconfirm
+        pacman -S --noconfirm \
+          git \
+          sudo fakeroot debugedit binutils \
+          gcc make
+
+    - name: Create builder user and setup environment
+      run: |
+        useradd -m -u 1001 -s /bin/bash builder
+        echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+        mkdir /build && chown builder:builder /build
+
+    - name: Clone and install yay-bin (as builder user)
+      run: |
+        su - builder -c "
+          cd /build
+          git clone https://aur.archlinux.org/yay-bin.git
+          cd yay-bin
+          makepkg -si --noconfirm
+        "
+
+    - name: Install pgadmin4 using yay (as builder user)
+      run: |
+        su - builder -c "yay -Sy pgadmin4 --noconfirm"
+
+    - name: Display build results
+      run: |
+        echo 'Installed pgadmin4 related packages:'
+        pacman -Q | grep pgadmin
